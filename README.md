@@ -1,67 +1,75 @@
-# Spring Boot based Java web application
- 
-This is a simple Sprint Boot based Java application that can be built using Maven. Sprint Boot dependencies are handled using the pom.xml 
-at the root directory of the repository.
 
-This is a MVC architecture based application where controller returns a page with title and message attributes to the view.
-
-## Execute the application locally and access it using your browser
-
-Checkout the repo and move to the directory
-
-```
-git clone https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero/java-maven-sonar-argocd-helm-k8s/sprint-boot-app
-cd java-maven-sonar-argocd-helm-k8s/sprint-boot-app
-```
-
-Execute the Maven targets to generate the artifacts
-
-```
-mvn clean package
-```
-
-The above maven target stroes the artifacts to the `target` directory. You can either execute the artifact on your local machine
-(or) run it as a Docker container.
-
-** Note: To avoid issues with local setup, Java versions and other dependencies, I would recommend the docker way. **
+# Project - Ultimate Jenkins CI/CD Pipeline for Java Applications
 
 
-### Execute locally (Java 11 needed) and access the application on http://localhost:8080
 
-```
-java -jar target/spring-boot-web.jar
-```
+This project offers a CI/CD pipeline for Java applications using Jenkins, Maven, SonarQube, ArgoCD, Helm, and Kubernetes. It's  structured into two distinct stages: Continuous Integration (CI) and Continuous Delivery (CD).
 
-### The Docker way
+**  Project Highlights*
 
-Build the Docker Image
+- Streamlined CI/CD workflow for efficient Java application development.
+- Efficient pipeline management using declarative pipelines in Jenkins.
+- Enforces code quality with comprehensive static code analysis through SonarQube.
+- Continuous security verification with SAAT/DAST tools.
+- Automated image building and upload to AWS ECR for streamlined deployment.
+- Utilizes ArgoCD for automated Kubernetes deployments based on image updates.
+- Employs Helm charts for consistent application packaging within Kubernetes.
+- Provides a solid foundation for secure and reliable Java deployments.
 
-```
-docker build -t ultimate-cicd-pipeline:v1 .
-```
+**## Table of Contents**
 
-```
-docker run -d -p 8010:8080 -t ultimate-cicd-pipeline:v1
-```
-
-Hurray !! Access the application on `http://<ip-address>:8010`
-
-
-## Next Steps
-
-### Configure a Sonar Server locally
-
-```
-apt install unzip
-adduser sonarqube
-wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.4.0.54424.zip
-unzip *
-chmod -R 755 /home/sonarqube/sonarqube-9.4.0.54424
-chown -R sonarqube:sonarqube /home/sonarqube/sonarqube-9.4.0.54424
-cd sonarqube-9.4.0.54424/bin/linux-x86-64/
-./sonar.sh start
-```
-
-Hurray !! Now you can access the `SonarQube Server` on `http://<ip-address>:9000` 
+1. **Project Overview**
+2. **Prerequisites**
+3. **Getting Started**
+    - CI Pipeline Setup
+    - CD Pipeline Setup
+4. **Usage**
+    - Building and Running the Pipeline
+5. **Configuration**
+    - Customizing the Pipeline
+6. **Contributing**
+7. **License**
 
 
+**## Project Overview**
+
+This project streamlines the software development lifecycle for Java applications by creating an automated CI/CD pipeline. Leveraging Jenkins' declarative pipelines, the CI stage handles building, testing, static code analysis, security verification (optional), and image creation. Security-focused organizations can integrate SAAT/DAST tools into the CI pipeline for continuous security checks. Built images are seamlessly pushed to AWS ECR using shell commands.
+
+The CD stage leverages a Kubernetes cluster with Image Updater and ArgoCD. Image Updater continuously monitors AWS ECR for new images. Upon detection, it updates a separate Git repository specifically for image manifests using Helm charts. ArgoCD automatically detects changes in this Git repository and deploys the updated image to the Kubernetes cluster, ensuring efficient application rollouts.
+
+**## Prerequisites**
+
+Before delving into the setup, ensure you have the following prerequisites in place:
+
+- **Jenkins** server up and running.
+- **Declarative Pipeline Plugin** installed in Jenkins for easier pipeline definition.
+- **Maven** installed on your system.
+- **SonarQube** server accessible.
+- **AWS account** with ECR (Amazon Elastic Container Registry) configured.
+- **Kubernetes** cluster accessible.
+- Helm installed on your system (or within your Kubernetes cluster).
+- **ArgoCD** deployed and configured in your Kubernetes cluster.
+- **SAAT/DAST tools** (optional but recommended)
+
+**## Getting Started**
+
+**### CI Pipeline Setup**
+
+1. **Create a New Pipeline:** Navigate to Jenkins and create a new declarative pipeline for your Java application.
+2. **Pipeline Definition:** Utilize the Declarative Pipeline Plugin for a cleaner and more collaborative pipeline definition.
+3. **Multi-stage Pipeline Definition:** Define multiple stages within the pipeline for build, tests, code analysis, security (optional), image creation, and image upload.
+	- **Stage 1: Build (Maven):** Utilize Maven commands to build the application and execute unit tests.
+	- **Stage 2: Static Code Analysis:** Integrate with SonarQube to perform code quality analysis and identify potential issues.
+	- **Stage 3: Security Verification (Optional):** Integrate SAAT/DAST tools (e.g., OWASP ZAP) to identify security vulnerabilities.
+	- **Stage 4: Docker Image Creation:** Use shell commands to create a Docker image from the built application.
+	- **Stage 5: Image Upload to ECR:** Employ shell commands with AWS CLI tools to push the image to AWS ECR.
+4. **Configure Triggers:** Define triggers for the CI pipeline (e.g., upon code push to a Git branch, pull request creation).
+5. **Slack Notification (Optional):** Integrate a Slack notification plugin in Jenkins to send build results to a dedicated channel.
+
+**### CD Pipeline Setup**
+
+1. **Create a New Pipeline:** Establish a separate pipeline for the CD stage using Declarative Pipeline Plugin.
+2. **Stage 1: Monitor ECR (Image Updater):** Utilize an Image Updater tool (e.g., ECR Image Updater) within the pipeline to continuously monitor AWS ECR for new images.
+3. **Stage 2: Update Image Manifest Git Repo:** Upon detecting a new image, the pipeline updates a separate Git repository specifically for image manifests using Helm charts.
+4. **Configure ArgoCD to Watch Image Manifest Repo:** Configure ArgoCD to watch for changes in the image manifest Git repository.
+5. **Automated Deployment by ArgoCD:** Whenever ArgoCD detects
